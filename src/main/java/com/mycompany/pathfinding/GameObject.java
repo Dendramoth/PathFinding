@@ -21,13 +21,15 @@ public class GameObject {
     private double height = 0;
     private GraphicsContext graphicsContext;
     private Polygon gameObjectPolygon = new Polygon();
+    private Color color;
 
-    public GameObject(double possitionX, double possitionY, double width, double heigh, GraphicsContext graphicsContext) {
+    public GameObject(double possitionX, double possitionY, double width, double heigh, GraphicsContext graphicsContext, Color color) {
         this.possitionX = possitionX;
         this.possitionY = possitionY;
         this.width = width;
         this.height = heigh;
         this.graphicsContext = graphicsContext;
+        this.color = color;
         
         gameObjectPolygon.getPoints().addAll(new Double[]{
             possitionX, possitionY,
@@ -38,7 +40,7 @@ public class GameObject {
     }
 
     public void paintGameObject() {
-        graphicsContext.setFill(Color.AQUA);
+        graphicsContext.setStroke(color);
         graphicsContext.strokeRect(possitionX, possitionY, width, height);
     }
 

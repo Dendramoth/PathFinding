@@ -27,6 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.AudioClip;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 
 public class GameMainInfrastructure {
@@ -39,7 +40,9 @@ public class GameMainInfrastructure {
 
     private static Timeline gameLoop;
 
-    private List<GameObject> gameObjectsList = new ArrayList<GameObject>();
+    private List<GameObject> gameStaticObjectsList = new ArrayList<GameObject>();
+    private GameObject startObject;
+    private GameObject endObject;
     
 
     public GameMainInfrastructure(Stage stage, VBox gamePanel) throws Exception {
@@ -61,17 +64,22 @@ public class GameMainInfrastructure {
     }
     
     private void createObjects(GraphicsContext graphicsContext){
-        gameObjectsList.add(new GameObject(300, 300, 150, 300, graphicsContext));
-        gameObjectsList.add(new GameObject(600, 600, 100, 100, graphicsContext));
-        gameObjectsList.add(new GameObject(400, 800, 150, 50, graphicsContext));
-        gameObjectsList.add(new GameObject(50, 700, 300, 25, graphicsContext));
-        gameObjectsList.add(new GameObject(1000, 100, 100, 300, graphicsContext));
+        gameStaticObjectsList.add(new GameObject(300, 300, 150, 300, graphicsContext, Color.BLACK));
+        gameStaticObjectsList.add(new GameObject(600, 600, 100, 100, graphicsContext, Color.BLACK));
+        gameStaticObjectsList.add(new GameObject(400, 800, 150, 50, graphicsContext, Color.BLACK));
+        gameStaticObjectsList.add(new GameObject(50, 700, 300, 25, graphicsContext, Color.BLACK));
+        gameStaticObjectsList.add(new GameObject(1000, 100, 100, 300, graphicsContext, Color.BLACK));
+        
+        startObject = new GameObject(0, 0, 50, 50, graphicsContext, Color.GREEN);
+        endObject = new GameObject(1200, 800, 50, 50, graphicsContext, Color.RED);
     }
     
     private void paintAllObjects(){
-        for (GameObject gameObject : gameObjectsList){
+        for (GameObject gameObject : gameStaticObjectsList){
             gameObject.paintGameObject();
         }
+        startObject.paintGameObject();
+        endObject.paintGameObject();
     }
 
     private void changeCanvasWidthAndHeighToFullSize() {
