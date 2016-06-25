@@ -8,6 +8,7 @@ package com.mycompany.pathfinding;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -34,7 +35,7 @@ public class GameMainInfrastructure {
 
     public static double WINDOW_WIDTH = 1024;
     public static double WINDOW_HEIGH = 720;
-    public static int FRAMERATE = 60;
+    public static int FRAMERATE = 1;
     public static double windowPositionX = 0.0;
     public static double windowPositionY = 0.0;
 
@@ -43,7 +44,8 @@ public class GameMainInfrastructure {
     private List<GameObject> gameStaticObjectsList = new ArrayList<GameObject>();
     private GameObject startObject;
     private GameObject endObject;
-    
+
+    private Pathfinding pathfinding;
 
     public GameMainInfrastructure(Stage stage, VBox gamePanel) throws Exception {
         StackPane gameCanvasPanel = new StackPane();
@@ -54,28 +56,29 @@ public class GameMainInfrastructure {
         createObjects(enviromentGraphicsContext);
 
         gameCanvasPanel.getChildren().add(baseCanvas);
-       
         VBox gameVerticalPanel = new VBox();
         gameVerticalPanel.getChildren().add(gameCanvasPanel);
-
         gamePanel.getChildren().add(gameVerticalPanel);
+
+        pathfinding = new Pathfinding(gameStaticObjectsList, startObject, endObject, enviromentGraphicsContext);
 
         buildAndSetGameLoop(stage);
     }
-    
-    private void createObjects(GraphicsContext graphicsContext){
+
+    private void createObjects(GraphicsContext graphicsContext) {
         gameStaticObjectsList.add(new GameObject(300, 300, 150, 300, graphicsContext, Color.BLACK));
         gameStaticObjectsList.add(new GameObject(600, 600, 100, 100, graphicsContext, Color.BLACK));
         gameStaticObjectsList.add(new GameObject(400, 800, 150, 50, graphicsContext, Color.BLACK));
         gameStaticObjectsList.add(new GameObject(50, 700, 300, 25, graphicsContext, Color.BLACK));
         gameStaticObjectsList.add(new GameObject(1000, 100, 100, 300, graphicsContext, Color.BLACK));
-        
-        startObject = new GameObject(0, 0, 50, 50, graphicsContext, Color.GREEN);
-        endObject = new GameObject(1200, 800, 50, 50, graphicsContext, Color.RED);
+
+        Random random = new Random();
+        startObject = new GameObject(1, random.nextDouble() * 800, 50, 50, graphicsContext, Color.GREEN);
+        endObject = new GameObject(1400, random.nextDouble() * 800, 50, 50, graphicsContext, Color.BLUE);
     }
-    
-    private void paintAllObjects(){
-        for (GameObject gameObject : gameStaticObjectsList){
+
+    private void paintAllObjects() {
+        for (GameObject gameObject : gameStaticObjectsList) {
             gameObject.paintGameObject();
         }
         startObject.paintGameObject();
@@ -86,7 +89,6 @@ public class GameMainInfrastructure {
         WINDOW_WIDTH = Screen.getPrimary().getVisualBounds().getMaxX();
         WINDOW_HEIGH = Screen.getPrimary().getVisualBounds().getMaxY() - 100;
     }
-
 
     private void buildAndSetGameLoop(final Stage stage) {
         final Duration oneFrameDuration = Duration.millis(1000 / FRAMERATE);
@@ -100,7 +102,7 @@ public class GameMainInfrastructure {
             @Override
             public void handle(Event event) {
                 paintAllObjects();
-              
+                pathfinding.createPath();
             }
 
         });
@@ -110,7 +112,6 @@ public class GameMainInfrastructure {
                 .keyFrames(oneFrame)
                 .build());
     }
-
 
     protected static void setGameLoop(Timeline gameLoop) {
         GameMainInfrastructure.gameLoop = gameLoop;

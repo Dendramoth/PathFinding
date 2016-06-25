@@ -8,6 +8,7 @@ package com.mycompany.pathfinding;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
 
 /**
  *
@@ -22,6 +23,8 @@ public class GameObject {
     private GraphicsContext graphicsContext;
     private Polygon gameObjectPolygon = new Polygon();
     private Color color;
+    
+    private double[][] pointsToReachEndPolygon;
 
     public GameObject(double possitionX, double possitionY, double width, double heigh, GraphicsContext graphicsContext, Color color) {
         this.possitionX = possitionX;
@@ -43,5 +46,19 @@ public class GameObject {
         graphicsContext.setStroke(color);
         graphicsContext.strokeRect(possitionX, possitionY, width, height);
     }
+    
+    public Shape detectIntersection(Shape lineDetection){
+        return Shape.intersect(gameObjectPolygon, lineDetection);
+    }
+
+    public double getPossitionX() {
+        return possitionX;
+    }
+
+    public double getPossitionY() {
+        return possitionY;
+    }
+    
+    
 
 }
