@@ -14,9 +14,17 @@ import java.util.List;
  */
 public class Pathfinding {
     private List<GameObject> gameStaticObjectsList = new ArrayList<GameObject>();
+    private GameObject startGameObject;
+    private GameObject endGameObject;
 
-    public Pathfinding(List<GameObject> gameStaticObjectsList) {
+    public Pathfinding(List<GameObject> gameStaticObjectsList, GameObject startGameObject, GameObject endGameObject) {
         this.gameStaticObjectsList = gameStaticObjectsList;
+        this.startGameObject = startGameObject;
+        this.endGameObject = endGameObject;
+    }
+    
+    public void createPath(){
+        
     }
     
     
