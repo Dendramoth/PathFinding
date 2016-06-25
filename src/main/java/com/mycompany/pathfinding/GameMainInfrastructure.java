@@ -6,6 +6,8 @@
 package com.mycompany.pathfinding;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -37,16 +39,8 @@ public class GameMainInfrastructure {
 
     private static Timeline gameLoop;
 
-    private boolean mousePressed = false;
-    private boolean keyAPressed = false;
-    private boolean keySPressed = false;
-    private boolean keyWPressed = false;
-    private boolean keyDPressed = false;
-    private boolean keySpacePressed = false;
-
-    private Label robotHpValueLabel;
-    private Label shieldHpValueLabel;
-    private Label gameOverLabel = new Label("");
+    private List<GameObject> gameObjectsList = new ArrayList<GameObject>();
+    
 
     public GameMainInfrastructure(Stage stage, VBox gamePanel) throws Exception {
         StackPane gameCanvasPanel = new StackPane();
@@ -54,7 +48,7 @@ public class GameMainInfrastructure {
 
         final Canvas baseCanvas = new Canvas(WINDOW_WIDTH, WINDOW_HEIGH);
         GraphicsContext enviromentGraphicsContext = baseCanvas.getGraphicsContext2D();
-        enviromentGraphicsContext.fillRect(150, 150, 100, 100);
+        createObjects(enviromentGraphicsContext);
 
         gameCanvasPanel.getChildren().add(baseCanvas);
        
@@ -63,10 +57,21 @@ public class GameMainInfrastructure {
 
         gamePanel.getChildren().add(gameVerticalPanel);
 
-        setUpMouseListeners(stage);
-        setUpKeyboardListeners(stage);
-
         buildAndSetGameLoop(stage);
+    }
+    
+    private void createObjects(GraphicsContext graphicsContext){
+        gameObjectsList.add(new GameObject(300, 300, 150, 300, graphicsContext));
+        gameObjectsList.add(new GameObject(600, 600, 100, 100, graphicsContext));
+        gameObjectsList.add(new GameObject(400, 800, 150, 50, graphicsContext));
+        gameObjectsList.add(new GameObject(50, 700, 300, 25, graphicsContext));
+        gameObjectsList.add(new GameObject(1000, 100, 100, 300, graphicsContext));
+    }
+    
+    private void paintAllObjects(){
+        for (GameObject gameObject : gameObjectsList){
+            gameObject.paintGameObject();
+        }
     }
 
     private void changeCanvasWidthAndHeighToFullSize() {
@@ -74,60 +79,6 @@ public class GameMainInfrastructure {
         WINDOW_HEIGH = Screen.getPrimary().getVisualBounds().getMaxY() - 100;
     }
 
-    private void setUpMouseListeners(Stage stage) {
-        stage.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                setUpMouseAsPressed(true);
-            }
-        });
-        stage.addEventFilter(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                setUpMouseAsPressed(false);
-            }
-        });
-    }
-
-    private void setUpKeyboardListeners(Stage stage) {
-        stage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                setUpKeyAsPressed(true, event);
-            }
-        });
-
-        stage.addEventFilter(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                setUpKeyAsPressed(false, event);
-            }
-        });
-    }
-
-    private void setUpMouseAsPressed(final boolean pressed) {
-        mousePressed = pressed;
-    }
-
-    private void setUpKeyAsPressed(final boolean pressed, final KeyEvent event) {
-        switch (event.getCode().toString().toUpperCase()) {
-            case "A":
-                keyAPressed = pressed;
-                break;
-            case "S":
-                keySPressed = pressed;
-                break;
-            case "W":
-                keyWPressed = pressed;
-                break;
-            case "D":
-                keyDPressed = pressed;
-                break;
-            case "SPACE":
-                keySpacePressed = pressed;
-             
-        }       
-    }
 
     private void buildAndSetGameLoop(final Stage stage) {
         final Duration oneFrameDuration = Duration.millis(1000 / FRAMERATE);
@@ -140,8 +91,7 @@ public class GameMainInfrastructure {
              */
             @Override
             public void handle(Event event) {
-                windowPositionX = stage.getX();
-                windowPositionY = stage.getY();
+                paintAllObjects();
               
             }
 
