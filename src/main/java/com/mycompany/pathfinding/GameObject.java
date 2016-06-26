@@ -39,10 +39,15 @@ public class GameObject {
         this.graphicsContext = graphicsContext;
         this.color = color;
         
-        polygonLineList.add(new Line(possitionX, possitionY, possitionX + this.width, possitionY));
-        polygonLineList.add(new Line(possitionX + this.width, possitionY, possitionX + this.width, possitionY + height));
-        polygonLineList.add(new Line(possitionX + this.width, possitionY + height, possitionX, possitionY + height));
-        polygonLineList.add(new Line(possitionX, possitionY + height, possitionX, possitionY));
+        Line line0 = new Line(possitionX, possitionY, possitionX + this.width, possitionY);
+        Line line1 = new Line(possitionX + this.width, possitionY, possitionX + this.width, possitionY + height);
+        Line line2 = new Line(possitionX + this.width, possitionY + height, possitionX, possitionY + height);
+        Line line3 = new Line(possitionX, possitionY + height, possitionX, possitionY);
+        
+        polygonLineList.add(line0);
+        polygonLineList.add(line1);
+        polygonLineList.add(line2);
+        polygonLineList.add(line3);
         
         gameObjectPolygon.getPoints().addAll(new Double[]{
             possitionX, possitionY,
@@ -76,7 +81,9 @@ public class GameObject {
     public List<Line> getPolygonLineList() {
         return polygonLineList;
     }
-    
+
+  
+
     
 
 }

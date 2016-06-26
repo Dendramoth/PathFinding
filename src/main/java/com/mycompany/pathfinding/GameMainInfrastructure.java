@@ -46,6 +46,7 @@ public class GameMainInfrastructure {
     private GameObject endObject;
 
     private Pathfinding pathfinding;
+    private PathPoint path = new PathPoint();
 
     public GameMainInfrastructure(Stage stage, VBox gamePanel) throws Exception {
         StackPane gameCanvasPanel = new StackPane();
@@ -102,7 +103,7 @@ public class GameMainInfrastructure {
             @Override
             public void handle(Event event) {
                 paintAllObjects();
-                pathfinding.createPath();
+                pathfinding.createPathDetectCollisionWithObjects(startObject.getPossitionX(), startObject.getPossitionY(), endObject.getPossitionX(), endObject.getPossitionY(), path);
             }
 
         });
