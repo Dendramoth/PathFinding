@@ -36,6 +36,9 @@ public class FindPathAroundObject {
 
     private void findPathAroundObject() {
         int indexOfCrossedLineInObjectLineList = findCornersOfIntersectedLineOfPolygon(gameObject, new Rectangle(currentX - 1, currentY - 1, 3, 3));
+        if (detectVisibilityOfFinalPointFromNextLine(gameObject.getPolygonLineList().get(indexOfCrossedLineInObjectLineList), gameObject.getPolygonLineList().get(indexOfCrossedLineInObjectLineList))){
+            return;
+        }
 
         int indexOfFirstLeftLine = (indexOfCrossedLineInObjectLineList + 1) % gameObject.getPolygonLineList().size();
         int indexOfFirstRightLine = (indexOfCrossedLineInObjectLineList - 1) % gameObject.getPolygonLineList().size();
@@ -60,6 +63,10 @@ public class FindPathAroundObject {
             }
         }
         return 0;
+    }
+    
+    private void detectVisibilityOfFinalPointFromPoint(){
+        
     }
 
     private boolean detectVisibilityOfFinalPointFromNextLine(Line currentLine, Line lastLine) {

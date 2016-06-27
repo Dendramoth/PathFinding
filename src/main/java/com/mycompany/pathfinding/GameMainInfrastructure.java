@@ -47,6 +47,7 @@ public class GameMainInfrastructure {
 
     private Pathfinding pathfinding;
     private PathPoint path = new PathPoint();
+    private double[][] polygonPoints;
 
     public GameMainInfrastructure(Stage stage, VBox gamePanel) throws Exception {
         StackPane gameCanvasPanel = new StackPane();
@@ -67,15 +68,45 @@ public class GameMainInfrastructure {
     }
 
     private void createObjects(GraphicsContext graphicsContext) {
-        gameStaticObjectsList.add(new GameObject(300, 300, 150, 300, graphicsContext, Color.BLACK));
-        gameStaticObjectsList.add(new GameObject(600, 600, 100, 100, graphicsContext, Color.BLACK));
-        gameStaticObjectsList.add(new GameObject(400, 800, 150, 50, graphicsContext, Color.BLACK));
-        gameStaticObjectsList.add(new GameObject(50, 700, 300, 25, graphicsContext, Color.BLACK));
-        gameStaticObjectsList.add(new GameObject(1000, 100, 100, 300, graphicsContext, Color.BLACK));
+        List<Point> pointList = new ArrayList<Point>();
 
+        Point centerPoint = new Point(450, 700);
+        pointList.add(new Point(600, 100));
+        pointList.add(new Point(800, 100));
+        pointList.add(new Point(800, 600));
+        pointList.add(new Point(600, 600));
+        gameStaticObjectsList.add(new GameObject(pointList, centerPoint, graphicsContext, Color.BLACK));
+
+        centerPoint = new Point(300, 300);
+        pointList.clear();
+        pointList.add(new Point(200, 200));
+        pointList.add(new Point(500, 200));
+        pointList.add(new Point(500, 500));
+        pointList.add(new Point(300, 500));
+        pointList.add(new Point(300, 300));
+        pointList.add(new Point(200, 300));
+        gameStaticObjectsList.add(new GameObject(pointList, centerPoint, graphicsContext, Color.BLACK));
+
+        
         Random random = new Random();
-        startObject = new GameObject(1, random.nextDouble() * 800, 50, 50, graphicsContext, Color.GREEN);
-        endObject = new GameObject(1400, random.nextDouble() * 800, 50, 50, graphicsContext, Color.BLUE);
+        double randomPoss = random.nextDouble() * 800;
+        centerPoint = new Point(25, randomPoss + 25);
+        pointList.clear();
+        pointList.add(new Point(1, randomPoss));
+        pointList.add(new Point(50, randomPoss));
+        pointList.add(new Point(50, randomPoss + 50));
+        pointList.add(new Point(1, randomPoss + 50));
+        startObject = new GameObject(pointList, centerPoint, graphicsContext, Color.GREEN);
+
+        
+        randomPoss = random.nextDouble() * 800;
+        centerPoint = new Point(1225, randomPoss + 25);
+        pointList.clear();
+        pointList.add(new Point(1200, randomPoss));
+        pointList.add(new Point(1250, randomPoss));
+        pointList.add(new Point(1250, randomPoss + 50));
+        pointList.add(new Point(1200, randomPoss + 50));
+        endObject = new GameObject(pointList, centerPoint, graphicsContext, Color.BLUE);
     }
 
     private void paintAllObjects() {
