@@ -25,6 +25,16 @@ public class Point {
     public double getCoordY() {
         return coordY;
     }
+
+    public void setCoordX(double coordX) {
+        this.coordX = coordX;
+    }
+
+    public void setCoordY(double coordY) {
+        this.coordY = coordY;
+    }
+    
+    
     
     
 }

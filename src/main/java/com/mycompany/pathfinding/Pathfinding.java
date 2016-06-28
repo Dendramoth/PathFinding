@@ -6,6 +6,7 @@
 package com.mycompany.pathfinding;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -30,31 +31,42 @@ public class Pathfinding {
         this.graphicsContext = graphicsContext;
     }
 
-    public void createPathDetectCollisionWithObjects(double startPointX, double startPointY, double targetPointX, double targetPointY, PathPoint pathPoint) {
+    public void createPath(double startPointX, double startPointY, double targetPointX, double targetPointY) {
         Line line = new Line(startPointX, startPointY, targetPointX, targetPointY);
-        graphicsContext.setStroke(Color.RED);
-        graphicsContext.strokeLine(startPointX, startPointY, targetPointX, targetPointY);
         boolean point2IsVisibleFromPoint1 = true;
+        
+        sortStaticObjectsBasedOnDistanceFromPlayer();
 
+        Point currentPoint = new Point(startPointX, startPointY);
+        
         for (GameObject gameStaticObject : gameStaticObjectsList) {
             Shape intersection = gameStaticObject.detectIntersection(line);
             if (!(intersection.getLayoutBounds().getHeight() <= 0 || intersection.getLayoutBounds().getWidth() <= 0)) {
-                IntersectionPoint intersectionPoint = getIntersectionPointCoordinates(intersection);
+                Point intersectionPoint = getIntersectionPointCoordinates(intersection);
                 point2IsVisibleFromPoint1 = false;
+                
+                graphicsContext.setStroke(Color.RED);
+                graphicsContext.strokeLine(currentPoint.getCoordX(), currentPoint.getCoordY(), intersectionPoint.getCoordX(), intersectionPoint.getCoordY());
 
                 graphicsContext.fillOval(intersectionPoint.getCoordX() - 5, intersectionPoint.getCoordY() - 5, 11, 11);
                 FindPathAroundObject findPathAroundObject = new FindPathAroundObject(intersectionPoint.getCoordX(), intersectionPoint.getCoordY(), targetPointX, targetPointY, gameStaticObject, graphicsContext);
+                currentPoint = findPathAroundObject.findPathAroundObject();
             }
         }
+        
+        graphicsContext.setStroke(Color.RED);
+        graphicsContext.strokeLine(currentPoint.getCoordX(), currentPoint.getCoordY(), endGameObject.getPossitionX(), endGameObject.getPossitionY());
 
         if (point2IsVisibleFromPoint1) {
+            graphicsContext.setStroke(Color.RED);
+            graphicsContext.strokeLine(startPointX, startPointY, targetPointX, targetPointY);
         } else {
 
         }
     }
-    
-    private IntersectionPoint getIntersectionPointCoordinates(Shape intersection) {
-        IntersectionPoint intersectionPoint = new IntersectionPoint();
+
+    private Point getIntersectionPointCoordinates(Shape intersection) {
+        Point intersectionPoint = new Point(0, 0);
 
         if (startGameObject.getPossitionX() < endGameObject.getPossitionX()) {
             intersectionPoint.setCoordX(intersection.getLayoutBounds().getMinX());
@@ -71,30 +83,12 @@ public class Pathfinding {
         return intersectionPoint;
     }
 
-    private static class IntersectionPoint {
-
-        private double coordX = 0;
-        private double coordY = 0;
-
-        public IntersectionPoint() {
+    private void sortStaticObjectsBasedOnDistanceFromPlayer() {
+        for (int i = 0; i < gameStaticObjectsList.size(); i++) {
+            gameStaticObjectsList.get(i).setObjectForComparisonPosX(startGameObject.getPossitionOnCanvasX());
+            gameStaticObjectsList.get(i).setObjectForComparisonPosY(startGameObject.getPossitionOnCanvasY());
         }
-
-        public double getCoordX() {
-            return coordX;
-        }
-
-        public void setCoordX(double coordX) {
-            this.coordX = coordX;
-        }
-
-        public double getCoordY() {
-            return coordY;
-        }
-
-        public void setCoordY(double coordY) {
-            this.coordY = coordY;
-        }
-
+        Collections.sort(gameStaticObjectsList);
     }
 
 }

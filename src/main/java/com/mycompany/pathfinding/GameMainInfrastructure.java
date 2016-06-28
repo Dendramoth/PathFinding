@@ -86,6 +86,14 @@ public class GameMainInfrastructure {
         pointList.add(new Point(300, 300));
         pointList.add(new Point(200, 300));
         gameStaticObjectsList.add(new GameObject(pointList, centerPoint, graphicsContext, Color.BLACK));
+        
+        centerPoint = new Point(1550, 550);
+        pointList.clear();
+        pointList.add(new Point(1500, 100));
+        pointList.add(new Point(1600, 100));
+        pointList.add(new Point(1600, 1000));
+        pointList.add(new Point(1500, 1000));
+        gameStaticObjectsList.add(new GameObject(pointList, centerPoint, graphicsContext, Color.BLACK));
 
         
         Random random = new Random();
@@ -100,12 +108,12 @@ public class GameMainInfrastructure {
 
         
         randomPoss = random.nextDouble() * 800;
-        centerPoint = new Point(1225, randomPoss + 25);
+        centerPoint = new Point(1725, randomPoss + 25);
         pointList.clear();
-        pointList.add(new Point(1200, randomPoss));
-        pointList.add(new Point(1250, randomPoss));
-        pointList.add(new Point(1250, randomPoss + 50));
-        pointList.add(new Point(1200, randomPoss + 50));
+        pointList.add(new Point(1700, randomPoss));
+        pointList.add(new Point(1750, randomPoss));
+        pointList.add(new Point(1750, randomPoss + 50));
+        pointList.add(new Point(1700, randomPoss + 50));
         endObject = new GameObject(pointList, centerPoint, graphicsContext, Color.BLUE);
     }
 
@@ -134,7 +142,7 @@ public class GameMainInfrastructure {
             @Override
             public void handle(Event event) {
                 paintAllObjects();
-                pathfinding.createPathDetectCollisionWithObjects(startObject.getPossitionX(), startObject.getPossitionY(), endObject.getPossitionX(), endObject.getPossitionY(), path);
+                pathfinding.createPath(startObject.getPossitionX(), startObject.getPossitionY(), endObject.getPossitionX(), endObject.getPossitionY());
             }
 
         });

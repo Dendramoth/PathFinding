@@ -17,7 +17,7 @@ import javafx.scene.shape.Shape;
  *
  * @author Dendra
  */
-public class GameObject {
+public class GameObject implements Comparable<GameObject> {
 
     private double possitionX = 0;
     private double possitionY = 0;
@@ -27,12 +27,20 @@ public class GameObject {
     private double[] xPoints;
     private double[] yPoints;
     private int numberOfPoints;
+    
+    private double possitionOnCanvasX;
+    private double possitionOnCanvasY;
+    private double objectForComparisonPosX;
+    private double objectForComparisonPosY;
 
     private List<Line> polygonLineList = new ArrayList<Line>();
 
     public GameObject(List<Point> pointsList, Point centerPoint, GraphicsContext graphicsContext, Color color) {
         this.possitionX = centerPoint.getCoordX();
         this.possitionY = centerPoint.getCoordY();
+        this.possitionOnCanvasX = centerPoint.getCoordX();
+        this.possitionOnCanvasY = centerPoint.getCoordY();
+        
         this.graphicsContext = graphicsContext;
         this.color = color;
         this.numberOfPoints = pointsList.size();
@@ -91,6 +99,51 @@ public class GameObject {
 
     public List<Line> getPolygonLineList() {
         return polygonLineList;
+    }
+
+    public double getPossitionOnCanvasX() {
+        return possitionOnCanvasX;
+    }
+
+    public void setPossitionOnCanvasX(double possitionOnCanvasX) {
+        this.possitionOnCanvasX = possitionOnCanvasX;
+    }
+
+    public double getPossitionOnCanvasY() {
+        return possitionOnCanvasY;
+    }
+
+    public void setPossitionOnCanvasY(double possitionOnCanvasY) {
+        this.possitionOnCanvasY = possitionOnCanvasY;
+    }
+
+    public double getObjectForComparisonPosX() {
+        return objectForComparisonPosX;
+    }
+
+    public void setObjectForComparisonPosX(double objectForComparisonPosX) {
+        this.objectForComparisonPosX = objectForComparisonPosX;
+    }
+
+    public double getObjectForComparisonPosY() {
+        return objectForComparisonPosY;
+    }
+
+    public void setObjectForComparisonPosY(double objectForComparisonPosY) {
+        this.objectForComparisonPosY = objectForComparisonPosY;
+    }
+    
+    
+    
+    @Override
+    public int compareTo(GameObject o) {
+        double myDistance = Math.sqrt((this.possitionOnCanvasX - this.objectForComparisonPosX) * (this.possitionOnCanvasX - this.objectForComparisonPosX) + (this.possitionOnCanvasY - this.objectForComparisonPosY) * (this.possitionOnCanvasY - this.objectForComparisonPosY));
+        double otherDistance = Math.sqrt((o.getPossitionOnCanvasX() - o.getObjectForComparisonPosX()) * (o.getPossitionOnCanvasX() - o.getObjectForComparisonPosX()) + (o.getPossitionOnCanvasY() - o.getObjectForComparisonPosY()) * (o.getPossitionOnCanvasY() - o.getObjectForComparisonPosY()));
+        if (myDistance < otherDistance) {
+            return -1;
+        } else {
+            return 1;
+        }
     }
 
 }

@@ -22,6 +22,7 @@ public class FindPathAroundObject {
     private double goalY;
     private GameObject gameObject;
     private GraphicsContext graphicsContext;
+    private Point pointFromWhichTheTargetIsVissible = new Point(0, 0);
 
     public FindPathAroundObject(double currentX, double currentY, double goalX, double goalY, GameObject gameObject, GraphicsContext graphicsContext) {
         this.currentX = currentX;
@@ -31,22 +32,22 @@ public class FindPathAroundObject {
         this.gameObject = gameObject;
         this.graphicsContext = graphicsContext;
 
-        findPathAroundObject();
     }
 
-    private void findPathAroundObject() {
+    public Point findPathAroundObject() {
         int indexOfCrossedLineInObjectLineList = findCornersOfIntersectedLineOfPolygon(gameObject, new Rectangle(currentX - 1, currentY - 1, 3, 3));
         if (detectVisibilityOfFinalPointFromNextLine(gameObject.getPolygonLineList().get(indexOfCrossedLineInObjectLineList), gameObject.getPolygonLineList().get(indexOfCrossedLineInObjectLineList))){
-            return;
+            return pointFromWhichTheTargetIsVissible;
         }
 
         int indexOfFirstLeftLine = (indexOfCrossedLineInObjectLineList + 1) % gameObject.getPolygonLineList().size();
         int indexOfFirstRightLine = (indexOfCrossedLineInObjectLineList - 1) % gameObject.getPolygonLineList().size();
         
         if (detectVisibilityOfFinalPointFromNextLine(gameObject.getPolygonLineList().get(indexOfFirstLeftLine), gameObject.getPolygonLineList().get(indexOfCrossedLineInObjectLineList))){
-            return;
+            return pointFromWhichTheTargetIsVissible;
         }else{
             detectVisibilityOfFinalPointFromNextLine(gameObject.getPolygonLineList().get(indexOfFirstRightLine), gameObject.getPolygonLineList().get(indexOfCrossedLineInObjectLineList));
+            return pointFromWhichTheTargetIsVissible;
         }
         
     }
@@ -98,7 +99,10 @@ public class FindPathAroundObject {
         Line testLine = new Line(currentX, currentY, goalX, goalY);
         Shape intersection = Shape.intersect(testLine, gameObject.getGameObjectPolygon());
         if (intersection.getLayoutBounds().getHeight() <= 0 || intersection.getLayoutBounds().getWidth() <= 0) {
-            graphicsContext.strokeLine(currentX, currentY, goalX, goalY);
+            
+            pointFromWhichTheTargetIsVissible.setCoordX(currentX);
+            pointFromWhichTheTargetIsVissible.setCoordY(currentY);
+         //   graphicsContext.strokeLine(currentX, currentY, goalX, goalY);
             return true;
         }
 
