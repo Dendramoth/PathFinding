@@ -23,6 +23,7 @@ public class Pathfinding {
     private GameObject startGameObject;
     private GameObject endGameObject;
     private GraphicsContext graphicsContext;
+    private List<Point> listOfPathPoints = new ArrayList<Point>();
 
     public Pathfinding(List<GameObject> gameStaticObjectsList, GameObject startGameObject, GameObject endGameObject, GraphicsContext graphicsContext) {
         this.gameStaticObjectsList = gameStaticObjectsList;
@@ -32,7 +33,7 @@ public class Pathfinding {
     }
 
     public void createPath(double startPointX, double startPointY, double targetPointX, double targetPointY) {
-        Line line = new Line(startPointX, startPointY, targetPointX, targetPointY);
+        
         boolean point2IsVisibleFromPoint1 = true;
         
         sortStaticObjectsBasedOnDistanceFromPlayer();
@@ -40,6 +41,8 @@ public class Pathfinding {
         Point currentPoint = new Point(startPointX, startPointY);
         
         for (GameObject gameStaticObject : gameStaticObjectsList) {
+            Line line = new Line(currentPoint.getCoordX(), currentPoint.getCoordY(), targetPointX, targetPointY);
+            listOfPathPoints.add(currentPoint);
             Shape intersection = gameStaticObject.detectIntersection(line);
             if (!(intersection.getLayoutBounds().getHeight() <= 0 || intersection.getLayoutBounds().getWidth() <= 0)) {
                 Point intersectionPoint = getIntersectionPointCoordinates(intersection);
@@ -48,20 +51,20 @@ public class Pathfinding {
                 graphicsContext.setStroke(Color.RED);
                 graphicsContext.strokeLine(currentPoint.getCoordX(), currentPoint.getCoordY(), intersectionPoint.getCoordX(), intersectionPoint.getCoordY());
 
+                graphicsContext.setFill(Color.BLACK);
                 graphicsContext.fillOval(intersectionPoint.getCoordX() - 5, intersectionPoint.getCoordY() - 5, 11, 11);
-                FindPathAroundObject findPathAroundObject = new FindPathAroundObject(intersectionPoint.getCoordX(), intersectionPoint.getCoordY(), targetPointX, targetPointY, gameStaticObject, graphicsContext);
+                FindPathAroundObject findPathAroundObject = new FindPathAroundObject(intersectionPoint.getCoordX(), intersectionPoint.getCoordY(), targetPointX, targetPointY, gameStaticObject, graphicsContext, listOfPathPoints);
                 currentPoint = findPathAroundObject.findPathAroundObject();
             }
         }
         
+        listOfPathPoints.add(new Point(endGameObject.getPossitionX(),endGameObject.getPossitionY()));
         graphicsContext.setStroke(Color.RED);
         graphicsContext.strokeLine(currentPoint.getCoordX(), currentPoint.getCoordY(), endGameObject.getPossitionX(), endGameObject.getPossitionY());
 
         if (point2IsVisibleFromPoint1) {
             graphicsContext.setStroke(Color.RED);
             graphicsContext.strokeLine(startPointX, startPointY, targetPointX, targetPointY);
-        } else {
-
         }
     }
 
@@ -89,6 +92,14 @@ public class Pathfinding {
             gameStaticObjectsList.get(i).setObjectForComparisonPosY(startGameObject.getPossitionOnCanvasY());
         }
         Collections.sort(gameStaticObjectsList);
+    }
+    
+    public void paintAllPathPoints(){
+        for (int i = 0; i < listOfPathPoints.size(); i++) {
+            Point point = listOfPathPoints.get(i);
+            graphicsContext.setFill(Color.AQUA);
+            graphicsContext.fillOval(point.getCoordX() - 5, point.getCoordY() - 5, 10, 10);
+        }
     }
 
 }

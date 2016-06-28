@@ -64,7 +64,7 @@ public class GameMainInfrastructure {
 
         pathfinding = new Pathfinding(gameStaticObjectsList, startObject, endObject, enviromentGraphicsContext);
 
-        buildAndSetGameLoop(stage);
+        buildAndSetGameLoop();
     }
 
     private void createObjects(GraphicsContext graphicsContext) {
@@ -91,8 +91,8 @@ public class GameMainInfrastructure {
         pointList.clear();
         pointList.add(new Point(1500, 100));
         pointList.add(new Point(1600, 100));
-        pointList.add(new Point(1600, 1000));
-        pointList.add(new Point(1500, 1000));
+        pointList.add(new Point(1600, 750));
+        pointList.add(new Point(1500, 750));
         gameStaticObjectsList.add(new GameObject(pointList, centerPoint, graphicsContext, Color.BLACK));
 
         
@@ -130,7 +130,7 @@ public class GameMainInfrastructure {
         WINDOW_HEIGH = Screen.getPrimary().getVisualBounds().getMaxY() - 100;
     }
 
-    private void buildAndSetGameLoop(final Stage stage) {
+    private void buildAndSetGameLoop() {
         final Duration oneFrameDuration = Duration.millis(1000 / FRAMERATE);
         final KeyFrame oneFrame = new KeyFrame(oneFrameDuration,
                 new EventHandler() {
@@ -143,6 +143,7 @@ public class GameMainInfrastructure {
             public void handle(Event event) {
                 paintAllObjects();
                 pathfinding.createPath(startObject.getPossitionX(), startObject.getPossitionY(), endObject.getPossitionX(), endObject.getPossitionY());
+                pathfinding.paintAllPathPoints();
             }
 
         });

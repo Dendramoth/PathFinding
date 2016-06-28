@@ -34,6 +34,7 @@ public class GameObject implements Comparable<GameObject> {
     private double objectForComparisonPosY;
 
     private List<Line> polygonLineList = new ArrayList<Line>();
+    
 
     public GameObject(List<Point> pointsList, Point centerPoint, GraphicsContext graphicsContext, Color color) {
         this.possitionX = centerPoint.getCoordX();
@@ -79,6 +80,10 @@ public class GameObject implements Comparable<GameObject> {
     public void paintGameObject() {
         graphicsContext.setStroke(color);
         graphicsContext.strokePolygon(xPoints, yPoints, numberOfPoints);
+    }
+    
+    public void moveGameObject() {
+                
     }
 
     public Shape detectIntersection(Shape lineDetection) {
