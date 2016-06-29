@@ -37,8 +37,9 @@ public class GameMainInfrastructure {
     private GameObject startObject;
     private GameObject endObject;
     private Pathfinding pathfinding;
-    
+
     private GraphicsContext graphicsContext;
+    List<Point> listOfPathPoints = new ArrayList<Point>();
 
     public GameMainInfrastructure(Stage stage, VBox gamePanel) throws Exception {
         StackPane gameCanvasPanel = new StackPane();
@@ -55,6 +56,7 @@ public class GameMainInfrastructure {
         gamePanel.getChildren().add(gameVerticalPanel);
 
         pathfinding = new Pathfinding(gameStaticObjectsList, startObject, endObject, enviromentGraphicsContext);
+        listOfPathPoints = pathfinding.createPath(startObject.getPossitionX(), startObject.getPossitionY(), endObject.getPossitionX(), endObject.getPossitionY());
 
         buildAndSetGameLoop();
     }
@@ -78,7 +80,7 @@ public class GameMainInfrastructure {
         pointList.add(new Point(300, 300));
         pointList.add(new Point(200, 300));
         gameStaticObjectsList.add(new GameObject(pointList, centerPoint, graphicsContext, Color.BLACK));
-        
+
         centerPoint = new Point(350, 800);
         pointList.clear();
         pointList.add(new Point(200, 700));
@@ -90,7 +92,7 @@ public class GameMainInfrastructure {
         pointList.add(new Point(300, 900));
         pointList.add(new Point(200, 800));
         gameStaticObjectsList.add(new GameObject(pointList, centerPoint, graphicsContext, Color.BLACK));
-        
+
         centerPoint = new Point(1550, 550);
         pointList.clear();
         pointList.add(new Point(1500, 100));
@@ -99,7 +101,6 @@ public class GameMainInfrastructure {
         pointList.add(new Point(1500, 750));
         gameStaticObjectsList.add(new GameObject(pointList, centerPoint, graphicsContext, Color.BLACK));
 
-        
         Random random = new Random();
         double randomPoss = random.nextDouble() * 800;
         centerPoint = new Point(25, randomPoss + 25);
@@ -110,7 +111,6 @@ public class GameMainInfrastructure {
         pointList.add(new Point(1, randomPoss + 50));
         startObject = new GameObject(pointList, centerPoint, graphicsContext, Color.GREEN);
 
-        
         randomPoss = random.nextDouble() * 800;
         centerPoint = new Point(1725, randomPoss + 25);
         pointList.clear();
@@ -139,34 +139,40 @@ public class GameMainInfrastructure {
         final KeyFrame oneFrame = new KeyFrame(oneFrameDuration,
                 new EventHandler() {
 
-            /**
-             * Everything inside this handle is what will be repeated in every
-             * game loop. Move objects here, detect collisions etc.
-             */
-            @Override
-            public void handle(Event event) {
-                graphicsContext.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGH);
-                paintAllObjects();
-                List<Point> listOfPathPoints = pathfinding.createPath(startObject.getPossitionX(), startObject.getPossitionY(), endObject.getPossitionX(), endObject.getPossitionY());
-                pathfinding.paintAllPathPoints();
-                startObject.moveGameObject(firstPointWhichWasntReachedYet(listOfPathPoints));
-            }
+                    /**
+                     * Everything inside this handle is what will be repeated in
+                     * every game loop. Move objects here, detect collisions
+                     * etc.
+                     */
+                    @Override
+                    public void handle(Event event) {
+                        graphicsContext.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGH);
+                        paintAllObjects();
 
-        });
+                        pathfinding.paintAllPathPoints();
+                        startObject.moveGameObject(firstPointWhichWasntReachedYet(listOfPathPoints, startObject));
+                    }
+
+                });
 
         setGameLoop(TimelineBuilder.create()
                 .cycleCount(Animation.INDEFINITE)
                 .keyFrames(oneFrame)
                 .build());
     }
-    
-    private Point firstPointWhichWasntReachedYet(List<Point> listOfPathPoints){
-        for (Point point : listOfPathPoints){
-            if (!point.isPointWasReached()){
-               return point; 
+
+    private Point firstPointWhichWasntReachedYet(List<Point> listOfPathPoints, GameObject gameObject) {
+        for (Point point : listOfPathPoints) {
+            if (!point.isPointWasReached()) {
+                if ((point.getCoordX() > gameObject.getPossitionX() - 1.5 && point.getCoordX() < gameObject.getPossitionX() + 1.5)
+                        && (point.getCoordY() > gameObject.getPossitionY() - 1.5 && point.getCoordY() < gameObject.getPossitionY() + 1.5)) { //point was reached
+                    listOfPathPoints.remove(point);
+                } else {
+                    return point;
+                }
             }
         }
-        return new Point(0,0);
+        return new Point(0, 0);
     }
 
     protected static void setGameLoop(Timeline gameLoop) {
