@@ -6,6 +6,7 @@
 package com.mycompany.pathfinding;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import javafx.animation.Animation;
@@ -162,16 +163,19 @@ public class GameMainInfrastructure {
     }
 
     private Point firstPointWhichWasntReachedYet(List<Point> listOfPathPoints, GameObject gameObject) {
-        for (Point point : listOfPathPoints) {
+        Iterator<Point> iterator = listOfPathPoints.iterator();
+        while (iterator.hasNext()) {
+            Point point = iterator.next();
             if (!point.isPointWasReached()) {
                 if ((point.getCoordX() > gameObject.getPossitionX() - 1.5 && point.getCoordX() < gameObject.getPossitionX() + 1.5)
                         && (point.getCoordY() > gameObject.getPossitionY() - 1.5 && point.getCoordY() < gameObject.getPossitionY() + 1.5)) { //point was reached
-                    listOfPathPoints.remove(point);
+                    iterator.remove();
                 } else {
                     return point;
                 }
             }
         }
+        
         return new Point(0, 0);
     }
 
