@@ -27,21 +27,16 @@ public class GameObject implements Comparable<GameObject> {
     private double[] xPoints;
     private double[] yPoints;
     private int numberOfPoints;
-    
-    private double possitionOnCanvasX;
-    private double possitionOnCanvasY;
+
     private double objectForComparisonPosX;
     private double objectForComparisonPosY;
 
     private List<Line> polygonLineList = new ArrayList<Line>();
-    
 
     public GameObject(List<Point> pointsList, Point centerPoint, GraphicsContext graphicsContext, Color color) {
         this.possitionX = centerPoint.getCoordX();
         this.possitionY = centerPoint.getCoordY();
-        this.possitionOnCanvasX = centerPoint.getCoordX();
-        this.possitionOnCanvasY = centerPoint.getCoordY();
-        
+
         this.graphicsContext = graphicsContext;
         this.color = color;
         this.numberOfPoints = pointsList.size();
@@ -81,9 +76,32 @@ public class GameObject implements Comparable<GameObject> {
         graphicsContext.setStroke(color);
         graphicsContext.strokePolygon(xPoints, yPoints, numberOfPoints);
     }
-    
-    public void moveGameObject() {
-                
+
+    public void moveGameObject(Point moveToPoint) {
+        double deltaX = moveToPoint.getCoordX() - possitionX;
+        double deltaY = moveToPoint.getCoordY() - possitionY;
+        double angle = calculateAngleBetweenPoints(deltaX, deltaY);
+
+        possitionX = possitionX - Math.cos(Math.toRadians(angle + 90)) * 1;
+        possitionY = possitionY - Math.sin(Math.toRadians(angle + 90)) * 1;
+
+        for (int i = 0; i < numberOfPoints; i++) {
+            xPoints[i] = xPoints[i] - Math.cos(Math.toRadians(angle + 90)) * 1;
+            yPoints[i] = yPoints[i] - Math.sin(Math.toRadians(angle + 90)) * 1;
+        }
+    }
+
+    private double calculateAngleBetweenPoints(double x, double y) {
+        double angle;
+        if (y == 0 && x == 0) {
+            angle = 0;
+        } else if (y > 0) {
+            angle = Math.toDegrees(Math.acos(x / (Math.sqrt(y * y + x * x)))) + 90;
+        } else {
+            angle = -Math.toDegrees(Math.acos(x / (Math.sqrt(y * y + x * x)))) + 90;
+        }
+        angle = (angle + 360) % 360;
+        return angle;
     }
 
     public Shape detectIntersection(Shape lineDetection) {
@@ -106,22 +124,6 @@ public class GameObject implements Comparable<GameObject> {
         return polygonLineList;
     }
 
-    public double getPossitionOnCanvasX() {
-        return possitionOnCanvasX;
-    }
-
-    public void setPossitionOnCanvasX(double possitionOnCanvasX) {
-        this.possitionOnCanvasX = possitionOnCanvasX;
-    }
-
-    public double getPossitionOnCanvasY() {
-        return possitionOnCanvasY;
-    }
-
-    public void setPossitionOnCanvasY(double possitionOnCanvasY) {
-        this.possitionOnCanvasY = possitionOnCanvasY;
-    }
-
     public double getObjectForComparisonPosX() {
         return objectForComparisonPosX;
     }
@@ -137,13 +139,11 @@ public class GameObject implements Comparable<GameObject> {
     public void setObjectForComparisonPosY(double objectForComparisonPosY) {
         this.objectForComparisonPosY = objectForComparisonPosY;
     }
-    
-    
-    
+
     @Override
     public int compareTo(GameObject o) {
-        double myDistance = Math.sqrt((this.possitionOnCanvasX - this.objectForComparisonPosX) * (this.possitionOnCanvasX - this.objectForComparisonPosX) + (this.possitionOnCanvasY - this.objectForComparisonPosY) * (this.possitionOnCanvasY - this.objectForComparisonPosY));
-        double otherDistance = Math.sqrt((o.getPossitionOnCanvasX() - o.getObjectForComparisonPosX()) * (o.getPossitionOnCanvasX() - o.getObjectForComparisonPosX()) + (o.getPossitionOnCanvasY() - o.getObjectForComparisonPosY()) * (o.getPossitionOnCanvasY() - o.getObjectForComparisonPosY()));
+        double myDistance = Math.sqrt((this.getPossitionX() - this.objectForComparisonPosX) * (this.getPossitionX() - this.objectForComparisonPosX) + (this.getPossitionY() - this.objectForComparisonPosY) * (this.getPossitionY() - this.objectForComparisonPosY));
+        double otherDistance = Math.sqrt((o.getPossitionX() - o.getObjectForComparisonPosX()) * (o.getPossitionX() - o.getObjectForComparisonPosX()) + (o.getPossitionY() - o.getObjectForComparisonPosY()) * (o.getPossitionY() - o.getObjectForComparisonPosY()));
         if (myDistance < otherDistance) {
             return -1;
         } else {

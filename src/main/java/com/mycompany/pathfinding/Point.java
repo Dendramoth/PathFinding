@@ -13,6 +13,7 @@ public class Point {
     private double coordX;
     private double coordY;
     private boolean lastPointInObject = false;
+    private boolean pointWasReached = false;
 
     public Point(double coordX, double coordY) {
         this.coordX = coordX;
@@ -42,10 +43,13 @@ public class Point {
     public void setLastPointInObject(boolean lastPointInObject) {
         this.lastPointInObject = lastPointInObject;
     }
-    
-    
-    
-    
-    
+
+    public boolean isPointWasReached() {
+        return pointWasReached;
+    }
+
+    public void setPointWasReached(boolean pointWasReached) {
+        this.pointWasReached = pointWasReached;
+    }
     
 }

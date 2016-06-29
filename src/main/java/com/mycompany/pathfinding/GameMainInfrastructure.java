@@ -27,7 +27,7 @@ public class GameMainInfrastructure {
 
     public static double WINDOW_WIDTH = 1024;
     public static double WINDOW_HEIGH = 720;
-    public static int FRAMERATE = 1;
+    public static int FRAMERATE = 60;
     public static double windowPositionX = 0.0;
     public static double windowPositionY = 0.0;
 
@@ -37,6 +37,8 @@ public class GameMainInfrastructure {
     private GameObject startObject;
     private GameObject endObject;
     private Pathfinding pathfinding;
+    
+    private GraphicsContext graphicsContext;
 
     public GameMainInfrastructure(Stage stage, VBox gamePanel) throws Exception {
         StackPane gameCanvasPanel = new StackPane();
@@ -45,6 +47,7 @@ public class GameMainInfrastructure {
         final Canvas baseCanvas = new Canvas(WINDOW_WIDTH, WINDOW_HEIGH);
         GraphicsContext enviromentGraphicsContext = baseCanvas.getGraphicsContext2D();
         createObjects(enviromentGraphicsContext);
+        this.graphicsContext = enviromentGraphicsContext;
 
         gameCanvasPanel.getChildren().add(baseCanvas);
         VBox gameVerticalPanel = new VBox();
@@ -74,6 +77,18 @@ public class GameMainInfrastructure {
         pointList.add(new Point(300, 500));
         pointList.add(new Point(300, 300));
         pointList.add(new Point(200, 300));
+        gameStaticObjectsList.add(new GameObject(pointList, centerPoint, graphicsContext, Color.BLACK));
+        
+        centerPoint = new Point(350, 800);
+        pointList.clear();
+        pointList.add(new Point(200, 700));
+        pointList.add(new Point(300, 600));
+        pointList.add(new Point(400, 600));
+        pointList.add(new Point(500, 700));
+        pointList.add(new Point(500, 800));
+        pointList.add(new Point(400, 900));
+        pointList.add(new Point(300, 900));
+        pointList.add(new Point(200, 800));
         gameStaticObjectsList.add(new GameObject(pointList, centerPoint, graphicsContext, Color.BLACK));
         
         centerPoint = new Point(1550, 550);
@@ -130,9 +145,11 @@ public class GameMainInfrastructure {
              */
             @Override
             public void handle(Event event) {
+                graphicsContext.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGH);
                 paintAllObjects();
-                pathfinding.createPath(startObject.getPossitionX(), startObject.getPossitionY(), endObject.getPossitionX(), endObject.getPossitionY());
+                List<Point> listOfPathPoints = pathfinding.createPath(startObject.getPossitionX(), startObject.getPossitionY(), endObject.getPossitionX(), endObject.getPossitionY());
                 pathfinding.paintAllPathPoints();
+                startObject.moveGameObject(firstPointWhichWasntReachedYet(listOfPathPoints));
             }
 
         });
@@ -141,6 +158,15 @@ public class GameMainInfrastructure {
                 .cycleCount(Animation.INDEFINITE)
                 .keyFrames(oneFrame)
                 .build());
+    }
+    
+    private Point firstPointWhichWasntReachedYet(List<Point> listOfPathPoints){
+        for (Point point : listOfPathPoints){
+            if (!point.isPointWasReached()){
+               return point; 
+            }
+        }
+        return new Point(0,0);
     }
 
     protected static void setGameLoop(Timeline gameLoop) {

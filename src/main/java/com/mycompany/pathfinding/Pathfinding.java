@@ -32,14 +32,14 @@ public class Pathfinding {
         this.graphicsContext = graphicsContext;
     }
 
-    public void createPath(double startPointX, double startPointY, double targetPointX, double targetPointY) {
+    public List<Point> createPath(double startPointX, double startPointY, double targetPointX, double targetPointY) {
         
         boolean point2IsVisibleFromPoint1 = true;
         
         sortStaticObjectsBasedOnDistanceFromPlayer();
 
         Point currentPoint = new Point(startPointX, startPointY);
-        listOfPathPoints.add(currentPoint);
+    //    listOfPathPoints.add(currentPoint);
         
         for (GameObject gameStaticObject : gameStaticObjectsList) {
             Line line = new Line(currentPoint.getCoordX(), currentPoint.getCoordY(), targetPointX, targetPointY);
@@ -68,6 +68,8 @@ public class Pathfinding {
             graphicsContext.setStroke(Color.RED);
             graphicsContext.strokeLine(startPointX, startPointY, targetPointX, targetPointY);
         }
+        
+        return listOfPathPoints;
     }
 
     private Point getIntersectionPointCoordinates(Shape intersection) {
@@ -90,8 +92,8 @@ public class Pathfinding {
 
     private void sortStaticObjectsBasedOnDistanceFromPlayer() {
         for (int i = 0; i < gameStaticObjectsList.size(); i++) {
-            gameStaticObjectsList.get(i).setObjectForComparisonPosX(startGameObject.getPossitionOnCanvasX());
-            gameStaticObjectsList.get(i).setObjectForComparisonPosY(startGameObject.getPossitionOnCanvasY());
+            gameStaticObjectsList.get(i).setObjectForComparisonPosX(startGameObject.getPossitionX());
+            gameStaticObjectsList.get(i).setObjectForComparisonPosY(startGameObject.getPossitionY());
         }
         Collections.sort(gameStaticObjectsList);
     }
