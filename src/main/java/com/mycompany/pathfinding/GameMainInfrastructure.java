@@ -5,7 +5,6 @@
  */
 package com.mycompany.pathfinding;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -13,21 +12,14 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.event.Event;
-import javafx.scene.control.Label;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 
@@ -44,10 +36,7 @@ public class GameMainInfrastructure {
     private List<GameObject> gameStaticObjectsList = new ArrayList<GameObject>();
     private GameObject startObject;
     private GameObject endObject;
-
     private Pathfinding pathfinding;
-    private PathPoint path = new PathPoint();
-    private double[][] polygonPoints;
 
     public GameMainInfrastructure(Stage stage, VBox gamePanel) throws Exception {
         StackPane gameCanvasPanel = new StackPane();
@@ -137,7 +126,7 @@ public class GameMainInfrastructure {
 
             /**
              * Everything inside this handle is what will be repeated in every
-             * game loop. Move objects here, detect colisions etc.
+             * game loop. Move objects here, detect collisions etc.
              */
             @Override
             public void handle(Event event) {

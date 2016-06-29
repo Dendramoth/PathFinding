@@ -39,10 +39,11 @@ public class Pathfinding {
         sortStaticObjectsBasedOnDistanceFromPlayer();
 
         Point currentPoint = new Point(startPointX, startPointY);
+        listOfPathPoints.add(currentPoint);
         
         for (GameObject gameStaticObject : gameStaticObjectsList) {
             Line line = new Line(currentPoint.getCoordX(), currentPoint.getCoordY(), targetPointX, targetPointY);
-            listOfPathPoints.add(currentPoint);
+            
             Shape intersection = gameStaticObject.detectIntersection(line);
             if (!(intersection.getLayoutBounds().getHeight() <= 0 || intersection.getLayoutBounds().getWidth() <= 0)) {
                 Point intersectionPoint = getIntersectionPointCoordinates(intersection);
@@ -55,6 +56,7 @@ public class Pathfinding {
                 graphicsContext.fillOval(intersectionPoint.getCoordX() - 5, intersectionPoint.getCoordY() - 5, 11, 11);
                 FindPathAroundObject findPathAroundObject = new FindPathAroundObject(intersectionPoint.getCoordX(), intersectionPoint.getCoordY(), targetPointX, targetPointY, gameStaticObject, graphicsContext, listOfPathPoints);
                 currentPoint = findPathAroundObject.findPathAroundObject();
+                listOfPathPoints.add(currentPoint);
             }
         }
         

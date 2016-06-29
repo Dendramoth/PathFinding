@@ -12,6 +12,7 @@ package com.mycompany.pathfinding;
 public class Point {
     private double coordX;
     private double coordY;
+    private boolean lastPointInObject = false;
 
     public Point(double coordX, double coordY) {
         this.coordX = coordX;
@@ -33,6 +34,16 @@ public class Point {
     public void setCoordY(double coordY) {
         this.coordY = coordY;
     }
+
+    public boolean isLastPointInObject() {
+        return lastPointInObject;
+    }
+
+    public void setLastPointInObject(boolean lastPointInObject) {
+        this.lastPointInObject = lastPointInObject;
+    }
+    
+    
     
     
     
