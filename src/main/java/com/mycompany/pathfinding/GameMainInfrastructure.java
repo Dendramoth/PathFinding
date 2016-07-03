@@ -56,8 +56,8 @@ public class GameMainInfrastructure {
         gameVerticalPanel.getChildren().add(gameCanvasPanel);
         gamePanel.getChildren().add(gameVerticalPanel);
 
-        pathfinding = new Pathfinding(gameStaticObjectsList, startObject, endObject, enviromentGraphicsContext);
-        listOfPathPoints = pathfinding.createPath(startObject.getPossitionX(), startObject.getPossitionY(), endObject.getPossitionX(), endObject.getPossitionY());
+        pathfinding = new Pathfinding(gameStaticObjectsList, enviromentGraphicsContext);
+        listOfPathPoints = pathfinding.createPath(startObject, endObject.getPossitionX(), endObject.getPossitionY());
 
         buildAndSetGameLoop();
     }

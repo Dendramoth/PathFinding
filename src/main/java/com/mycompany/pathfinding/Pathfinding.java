@@ -20,25 +20,21 @@ import javafx.scene.shape.Shape;
 public class Pathfinding {
 
     private List<GameObject> gameStaticObjectsList = new ArrayList<GameObject>();
-    private GameObject startGameObject;
-    private GameObject endGameObject;
     private GraphicsContext graphicsContext;
     private List<Point> listOfPathPoints = new ArrayList<Point>();
 
-    public Pathfinding(List<GameObject> gameStaticObjectsList, GameObject startGameObject, GameObject endGameObject, GraphicsContext graphicsContext) {
+    public Pathfinding(List<GameObject> gameStaticObjectsList, GraphicsContext graphicsContext) {
         this.gameStaticObjectsList = gameStaticObjectsList;
-        this.startGameObject = startGameObject;
-        this.endGameObject = endGameObject;
         this.graphicsContext = graphicsContext;
     }
 
-    public List<Point> createPath(double startPointX, double startPointY, double targetPointX, double targetPointY) {
+    public List<Point> createPath(GameObject startGameObject, double targetPointX, double targetPointY) {
         
         boolean point2IsVisibleFromPoint1 = true;
         
-        sortStaticObjectsBasedOnDistanceFromPlayer();
+        sortStaticObjectsBasedOnDistanceFromPlayer(startGameObject);
 
-        Point currentPoint = new Point(startPointX, startPointY);
+        Point currentPoint = new Point(startGameObject.getPossitionX(), startGameObject.getPossitionY());
     //    listOfPathPoints.add(currentPoint);
         
         for (GameObject gameStaticObject : gameStaticObjectsList) {
@@ -46,7 +42,7 @@ public class Pathfinding {
             
             Shape intersection = gameStaticObject.detectIntersection(line);
             if (!(intersection.getLayoutBounds().getHeight() <= 0 || intersection.getLayoutBounds().getWidth() <= 0)) {
-                Point intersectionPoint = getIntersectionPointCoordinates(intersection);
+                Point intersectionPoint = getIntersectionPointCoordinates(intersection, startGameObject, targetPointX, targetPointY);
                 point2IsVisibleFromPoint1 = false;
                 
                 graphicsContext.setStroke(Color.RED);
@@ -60,28 +56,28 @@ public class Pathfinding {
             }
         }
         
-        listOfPathPoints.add(new Point(endGameObject.getPossitionX(),endGameObject.getPossitionY()));
+        listOfPathPoints.add(new Point(targetPointX, targetPointY));
         graphicsContext.setStroke(Color.RED);
-        graphicsContext.strokeLine(currentPoint.getCoordX(), currentPoint.getCoordY(), endGameObject.getPossitionX(), endGameObject.getPossitionY());
+        graphicsContext.strokeLine(currentPoint.getCoordX(), currentPoint.getCoordY(), targetPointX, targetPointY);
 
         if (point2IsVisibleFromPoint1) {
             graphicsContext.setStroke(Color.RED);
-            graphicsContext.strokeLine(startPointX, startPointY, targetPointX, targetPointY);
+            graphicsContext.strokeLine(startGameObject.getPossitionX(), startGameObject.getPossitionY(), targetPointX, targetPointY);
         }
         
         return listOfPathPoints;
     }
 
-    private Point getIntersectionPointCoordinates(Shape intersection) {
+    private Point getIntersectionPointCoordinates(Shape intersection, GameObject startGameObject, double targetPointX, double targetPointY) {
         Point intersectionPoint = new Point(0, 0);
 
-        if (startGameObject.getPossitionX() < endGameObject.getPossitionX()) {
+        if (startGameObject.getPossitionX() < targetPointX) {
             intersectionPoint.setCoordX(intersection.getLayoutBounds().getMinX());
         } else {
             intersectionPoint.setCoordX(intersection.getLayoutBounds().getMaxX());
         }
 
-        if (startGameObject.getPossitionY() < endGameObject.getPossitionY()) {
+        if (startGameObject.getPossitionY() < targetPointY) {
             intersectionPoint.setCoordY(intersection.getLayoutBounds().getMinY());
         } else {
             intersectionPoint.setCoordY(intersection.getLayoutBounds().getMaxY());
@@ -90,7 +86,7 @@ public class Pathfinding {
         return intersectionPoint;
     }
 
-    private void sortStaticObjectsBasedOnDistanceFromPlayer() {
+    private void sortStaticObjectsBasedOnDistanceFromPlayer(GameObject startGameObject) {
         for (int i = 0; i < gameStaticObjectsList.size(); i++) {
             gameStaticObjectsList.get(i).setObjectForComparisonPosX(startGameObject.getPossitionX());
             gameStaticObjectsList.get(i).setObjectForComparisonPosY(startGameObject.getPossitionY());
