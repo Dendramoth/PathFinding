@@ -20,19 +20,23 @@ public class FindPathAroundObject {
 
     private double currentX;
     private double currentY;
-    private double goalX;
-    private double goalY;
+    private double targetX;
+    private double targetY;
+    private double lengthOfGoingAroundTheObjectFromLeft = 0;
+    private double lengthOfGoingAroundTheObjectFromRight = 0;
+    
     private GameObject gameObject;
     private GraphicsContext graphicsContext;
     private List<Point> leftListOfPathPointsAroundObject = new ArrayList<Point>();
     private List<Point> rightListOfPathPointsAroundObject = new ArrayList<Point>();
     private List<Point> listOfPathPoints = new ArrayList<Point>();
+    
 
-    public FindPathAroundObject(double currentX, double currentY, double goalX, double goalY, GameObject gameObject, GraphicsContext graphicsContext, List<Point> listOfPathPoints) {
+    public FindPathAroundObject(double currentX, double currentY, double targetX, double targetY, GameObject gameObject, GraphicsContext graphicsContext, List<Point> listOfPathPoints) {
         this.currentX = currentX;
         this.currentY = currentY;
-        this.goalX = goalX;
-        this.goalY = goalY;
+        this.targetX = targetX;
+        this.targetY = targetY;
         this.gameObject = gameObject;
         this.graphicsContext = graphicsContext;
         this.listOfPathPoints = listOfPathPoints;
@@ -93,74 +97,52 @@ public class FindPathAroundObject {
         return 0;
     }
 
+    private Point detectVisibilityOfFinalPointFromNextLine(Line currentLine, Line lastLine) {
+        Point currentPoint = new Point(0, 0);
+
+        if ((lastLine.getStartX() == currentLine.getStartX() && lastLine.getStartY() == currentLine.getStartY()) || (lastLine.getEndX() == currentLine.getStartX() && lastLine.getEndY() == currentLine.getStartY())) {
+            currentPoint.setCoordX(currentLine.getEndX());
+            currentPoint.setCoordY(currentLine.getEndY());
+        } else {
+            currentPoint.setCoordX(currentLine.getStartX());
+            currentPoint.setCoordY(currentLine.getStartY());
+        }
+
+        graphicsContext.fillOval(currentPoint.getCoordX() - 5, currentPoint.getCoordY() - 5, 10, 10);
+        
+        if (detectVisibilityOfFinalPointFromPoint(currentPoint)){
+            currentPoint.setLastPointInObject(true);
+            return currentPoint;
+        }
+        
+        return currentPoint;
+    }
+
     private boolean detectVisibilityOfFinalPointFromPoint(Point point) {
-        double currentPointX = point.getCoordX();
-        double currentPointY = point.getCoordY();
-
-        if (currentPointX < goalX) {
-            currentX = currentPointX + 1;
+        
+        if (point.getCoordX() < targetX) {
+            currentX = point.getCoordX() + 1;
         } else {
-            currentX = currentPointX - 1;
+            currentX = point.getCoordX() - 1;
         }
 
-        if (currentPointY < goalY) {
-            currentY = currentPointY + 1;
+        if (point.getCoordY() < targetY) {
+            currentY = point.getCoordY() + 1;
         } else {
-            currentY = currentPointY - 1;
+            currentY = point.getCoordY() - 1;
         }
 
-        graphicsContext.fillOval(currentPointX - 5, currentPointY - 5, 10, 10);
+        graphicsContext.fillOval(point.getCoordX() - 5, point.getCoordY() - 5, 10, 10);
 
-        Line testLine = new Line(currentX, currentY, goalX, goalY);
+        Line testLine = new Line(currentX, currentY, targetX, targetY);
         Shape intersection = Shape.intersect(testLine, gameObject.getGameObjectPolygon());
         if (intersection.getLayoutBounds().getHeight() <= 0 || intersection.getLayoutBounds().getWidth() <= 0) {
-
-            //pointFromWhichTheTargetIsVissible.setCoordX(currentX);
-            //pointFromWhichTheTargetIsVissible.setCoordY(currentY);
-            //   graphicsContext.strokeLine(currentX, currentY, goalX, goalY);
             return true;
         }
 
         return false;
     }
-
-    private Point detectVisibilityOfFinalPointFromNextLine(Line currentLine, Line lastLine) {
-        double currentLinePointX;
-        double currentLinePointY;
-
-        if ((lastLine.getStartX() == currentLine.getStartX() && lastLine.getStartY() == currentLine.getStartY()) || (lastLine.getEndX() == currentLine.getStartX() && lastLine.getEndY() == currentLine.getStartY())) {
-            currentLinePointX = currentLine.getEndX();
-            currentLinePointY = currentLine.getEndY();
-        } else {
-            currentLinePointX = currentLine.getStartX();
-            currentLinePointY = currentLine.getStartY();
-        }
-
-        graphicsContext.fillOval(currentLinePointX - 5, currentLinePointY - 5, 10, 10);
-
-        if (currentLinePointX < goalX) {
-            currentX = currentLinePointX + 1;
-        } else {
-            currentX = currentLinePointX - 1;
-        }
-
-        if (currentLinePointY < goalY) {
-            currentY = currentLinePointY + 1;
-        } else {
-            currentY = currentLinePointY - 1;
-        }
-
-        Point actualPoint = new Point(currentX, currentY);
-        
-        Line testLine = new Line(currentX, currentY, goalX, goalY);
-        Shape intersection = Shape.intersect(testLine, gameObject.getGameObjectPolygon());
-        if (intersection.getLayoutBounds().getHeight() <= 0 || intersection.getLayoutBounds().getWidth() <= 0) {
-            actualPoint.setLastPointInObject(true);
-            return actualPoint;
-        }
-        return actualPoint;
-    }
-
+    
     private int myMod(int x, int modulo) {
         return ((x % modulo) + modulo) % modulo;
     }

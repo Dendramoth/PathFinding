@@ -38,6 +38,11 @@ public class Pathfinding {
     //    listOfPathPoints.add(currentPoint);
         
         for (GameObject gameStaticObject : gameStaticObjectsList) {
+            System.out.println(currentPoint.getCoordX());
+            System.out.println(currentPoint.getCoordY());
+            System.out.println(targetPointX);
+            System.out.println(targetPointY);
+            
             Line line = new Line(currentPoint.getCoordX(), currentPoint.getCoordY(), targetPointX, targetPointY);
             
             Shape intersection = gameStaticObject.detectIntersection(line);
