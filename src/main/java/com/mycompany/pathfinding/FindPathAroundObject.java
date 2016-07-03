@@ -24,13 +24,15 @@ public class FindPathAroundObject {
     private double targetY;
     private double lengthOfGoingAroundTheObjectFromLeft = 0;
     private double lengthOfGoingAroundTheObjectFromRight = 0;
-    
+
+    private boolean pathFoundToTheRight;
+    private boolean pathFoundToTheLeft;
+
     private GameObject gameObject;
     private GraphicsContext graphicsContext;
     private List<Point> leftListOfPathPointsAroundObject = new ArrayList<Point>();
     private List<Point> rightListOfPathPointsAroundObject = new ArrayList<Point>();
     private List<Point> listOfPathPoints = new ArrayList<Point>();
-    
 
     public FindPathAroundObject(double currentX, double currentY, double targetX, double targetY, GameObject gameObject, GraphicsContext graphicsContext, List<Point> listOfPathPoints) {
         this.currentX = currentX;
@@ -40,46 +42,58 @@ public class FindPathAroundObject {
         this.gameObject = gameObject;
         this.graphicsContext = graphicsContext;
         this.listOfPathPoints = listOfPathPoints;
-        
+
         this.listOfPathPoints.add(new Point(currentX, currentY)); // add intersection point with object
     }
 
     public Point findPathAroundObject() {
         int linesInPolygon = gameObject.getPolygonLineList().size();
         int indexOfCrossedLineInObjectLineList = findCornersOfIntersectedLineOfPolygon(gameObject, new Rectangle(currentX - 1, currentY - 1, 3, 3));
-        Line line = gameObject.getPolygonLineList().get(indexOfCrossedLineInObjectLineList);
+        Line line = gameObject.getPolygonLineList().get(indexOfCrossedLineInObjectLineList); //get line of object crossed by path to final destination
 
         rightListOfPathPointsAroundObject.add(new Point(line.getStartX(), line.getStartY()));
         Point pointToTest = new Point(line.getStartX(), line.getStartY());
         if (detectVisibilityOfFinalPointFromPoint(pointToTest)) {
-            return pointToTest;
+            pathFoundToTheRight = true;
         }
 
         leftListOfPathPointsAroundObject.add(new Point(line.getEndX(), line.getEndY()));
         pointToTest = new Point(line.getEndX(), line.getEndY());
         if (detectVisibilityOfFinalPointFromPoint(pointToTest)) {
-            return pointToTest;
+            pathFoundToTheLeft = true;
         }
 
         for (int i = 1; i < gameObject.getPolygonLineList().size() + 1; i++) {
-
-            int indexOfLeftLine = myMod(indexOfCrossedLineInObjectLineList + i, linesInPolygon);
-            int indexOfRightLine = myMod(indexOfCrossedLineInObjectLineList - i, linesInPolygon);
-
-            Point currentPoint = detectVisibilityOfFinalPointFromNextLine(gameObject.getPolygonLineList().get(indexOfLeftLine), gameObject.getPolygonLineList().get(myMod(indexOfLeftLine - 1, linesInPolygon)));
-            leftListOfPathPointsAroundObject.add(currentPoint);
-            if (currentPoint.isLastPointInObject()){
-                listOfPathPoints.addAll(leftListOfPathPointsAroundObject);
-                return currentPoint;
+            Point currentPoint;
+            if (!pathFoundToTheLeft) {
+                int indexOfLeftLine = myMod(indexOfCrossedLineInObjectLineList + i, linesInPolygon);
+                currentPoint = detectVisibilityOfFinalPointFromLine(gameObject.getPolygonLineList().get(indexOfLeftLine), gameObject.getPolygonLineList().get(myMod(indexOfLeftLine - 1, linesInPolygon)));
+                leftListOfPathPointsAroundObject.add(currentPoint);
+                if (currentPoint.isLastPointInObject()) {
+                    pathFoundToTheLeft = true;
+                }
             }
-            currentPoint = detectVisibilityOfFinalPointFromNextLine(gameObject.getPolygonLineList().get(indexOfRightLine), gameObject.getPolygonLineList().get(myMod(indexOfRightLine + 1, linesInPolygon)));
-            rightListOfPathPointsAroundObject.add(currentPoint);
-            if (currentPoint.isLastPointInObject()){  
-                listOfPathPoints.addAll(rightListOfPathPointsAroundObject);
-                return currentPoint;
+
+            if (!pathFoundToTheRight) {
+                int indexOfRightLine = myMod(indexOfCrossedLineInObjectLineList - i, linesInPolygon);
+                currentPoint = detectVisibilityOfFinalPointFromLine(gameObject.getPolygonLineList().get(indexOfRightLine), gameObject.getPolygonLineList().get(myMod(indexOfRightLine + 1, linesInPolygon)));
+                rightListOfPathPointsAroundObject.add(currentPoint);
+                if (currentPoint.isLastPointInObject()) {
+                    pathFoundToTheRight = true;
+                }
             }
+
+            if (pathFoundToTheLeft && pathFoundToTheRight) {
+                if (leftListOfPathPointsAroundObject.size() < rightListOfPathPointsAroundObject.size()) {
+                    listOfPathPoints.addAll(leftListOfPathPointsAroundObject);
+                    return leftListOfPathPointsAroundObject.get(leftListOfPathPointsAroundObject.size() - 1);
+                }else{
+                    listOfPathPoints.addAll(rightListOfPathPointsAroundObject);
+                    return rightListOfPathPointsAroundObject.get(rightListOfPathPointsAroundObject.size() - 1);
+                }
+            }
+
         }
-
         return null;
     }
 
@@ -97,7 +111,7 @@ public class FindPathAroundObject {
         return 0;
     }
 
-    private Point detectVisibilityOfFinalPointFromNextLine(Line currentLine, Line lastLine) {
+    private Point detectVisibilityOfFinalPointFromLine(Line currentLine, Line lastLine) {
         Point currentPoint = new Point(0, 0);
 
         if ((lastLine.getStartX() == currentLine.getStartX() && lastLine.getStartY() == currentLine.getStartY()) || (lastLine.getEndX() == currentLine.getStartX() && lastLine.getEndY() == currentLine.getStartY())) {
@@ -109,17 +123,17 @@ public class FindPathAroundObject {
         }
 
         graphicsContext.fillOval(currentPoint.getCoordX() - 5, currentPoint.getCoordY() - 5, 10, 10);
-        
-        if (detectVisibilityOfFinalPointFromPoint(currentPoint)){
+
+        if (detectVisibilityOfFinalPointFromPoint(currentPoint)) {
             currentPoint.setLastPointInObject(true);
             return currentPoint;
         }
-        
+
         return currentPoint;
     }
 
     private boolean detectVisibilityOfFinalPointFromPoint(Point point) {
-        
+
         if (point.getCoordX() < targetX) {
             currentX = point.getCoordX() + 1;
         } else {
@@ -142,7 +156,7 @@ public class FindPathAroundObject {
 
         return false;
     }
-    
+
     private int myMod(int x, int modulo) {
         return ((x % modulo) + modulo) % modulo;
     }
