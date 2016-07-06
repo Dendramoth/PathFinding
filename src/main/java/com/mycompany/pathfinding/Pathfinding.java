@@ -50,8 +50,8 @@ public class Pathfinding {
 
                 graphicsContext.setFill(Color.BLACK);
                 graphicsContext.fillOval(intersectionPoint.getCoordX() - 5, intersectionPoint.getCoordY() - 5, 11, 11);
-                FindPathAroundObject findPathAroundObject = new FindPathAroundObject(intersectionPoint.getCoordX(), intersectionPoint.getCoordY(), targetPointX, targetPointY, gameStaticObject, graphicsContext, listOfPathPoints);
-                currentPoint = findPathAroundObject.findPathAroundObject();
+                FindPathAroundObject findPathAroundObject = new FindPathAroundObject(targetPointX, targetPointY, gameStaticObject, graphicsContext, listOfPathPoints);
+                currentPoint = findPathAroundObject.findPathAroundObject(intersectionPoint);
                 listOfPathPoints.add(currentPoint);
             }
         }
